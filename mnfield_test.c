@@ -5,6 +5,7 @@ char mnfield_test()
 {
 
     char res=1;
+    res=res* mnfield_TData_test();
     res=res*mnfield_new_int_t();
     res=res*mnfield_new_double_t();
     res=res*mnfield_new_mnstring_t();
@@ -115,3 +116,17 @@ char mnfield_clone_t()
     return res;
 }
 
+
+char mnfield_TData_test()
+{
+    print_blue("tetsing TDataField_is_equal...\n");
+    TDataField* d=TDataField_new();
+    TDataField_init(d,mnfield_new_int("age",43));
+    TDataField* d1=TDataField_new();
+    TDataField_init(d1,mnfield_new_int("age",43));
+    char ret = TData_isEqual(d,d1) ;
+    test_v1(ret);
+
+    return ret;
+
+}

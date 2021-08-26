@@ -91,7 +91,7 @@ char* TData_name(TData* d);
 TTypes TData_type(TData* d);
 char TData_is_visible(TData*d);
 void TData_set_visible(TData*d,char visible_bool);
-
+void TData_set_type(TData *d, TTypes data_type);
 typedef TData TDataInt ;
 void TDataInt_init(TDataInt* data,int val);
 TDataInt* TDataInt_new_init(int val);

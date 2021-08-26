@@ -10,5 +10,6 @@ char mnfield_setval_int_t();
 char mnfield_setval_double_t();
 char mnfield_setval_cstring_t();
 char mnfield_clone_t();
+char mnfield_TData_test();
 
 #endif // MNFIELD_TEST_H

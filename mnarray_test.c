@@ -163,6 +163,7 @@ char TArrayData_free_data_test()
     TData* data = cstring_new_TData(str3);
     TData_set_name(data,"charli");
     char* str = TData_name(data);
+    str++;
     TArrayData_add_presistent(&arr,cstring_new_TData(str1));
     TArrayData_add(&arr,cstring_new_TData(str2));
     TArrayData_add_clone(&arr,data);

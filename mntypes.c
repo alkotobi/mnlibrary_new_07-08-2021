@@ -100,10 +100,14 @@ void TData_clone_properties(TData* data_src,TData* data_des){
     TData_set_presistent(data_des,TData_is_presistent(data_src));
     TData_set_name(data_des,TData_name(data_src));
     TData_set_visible(data_des,TData_is_visible(data_src));
+    TData_set_type(data_des,TData_type(data_src));
 }
 
 char TData_isEqual(TData *d1, TData *d2)
 {
+    if (TData_type(d1)!=TData_type(d2)) {
+        return 0;
+    }
     assert(d1->is_equal);
     return d1->is_equal(TData_value(d1),TData_value(d2));
 }
@@ -297,4 +301,9 @@ char TData_is_visible(TData *d)
 void TData_set_visible(TData *d, char visible_bool)
 {
     d->priv.is_visible=visible_bool;
+}
+
+void TData_set_type(TData *d, TTypes data_type)
+{
+    d->priv.data_type=data_type;
 }
