@@ -7,7 +7,7 @@ extern "C"
 {
 #endif
 
-typedef struct TArrayParams TArrayParams ;
+typedef struct TArrayPrv TArrayPrv ;
 struct TArrayMethods {
     TFVoidVarVar add_item_ref;
     TFVoidVarVar add_item_cpy;
@@ -21,14 +21,17 @@ struct TArrayMethods {
     TFVoidVarVar add_or_replace_item;
 };
 #define $array_add_item_ref(array_ref,val_ref) ((TArray*)array_ref)->methods.add_item_ref(((TArray*)array_ref),val_ref)
-struct TArrayParams{
+struct TArrayPrv{
     TLint size;
     TLint count;
     TValues array;
 };
+
+void TArrayParams_init(struct TArrayPrv* prv);
+
 struct TArray{
     struct TArrayMethods methods;
-    TArrayParams params_prv;
+    TArrayPrv params_prv;
 };
 typedef struct TArray TArray ;
 
@@ -37,9 +40,8 @@ typedef struct TArray TArray ;
 
 
 TArray* TArray_new();
-void TArray_init(TArray* arr);
-void TArray_init_v1(TArray *arr,TLint size);
-TArray* TArray_new_init();
+TArray* TArray_init(TArray* arr);
+TArray *TArray_init_v1(TArray *arr,TLint size);
 void TArray_add(TArray *arr, TVar item);
 void TArray_add_cpy(TArray *arr, TVar item);
 void TArray_free_data(TArray *arr,TFVoidPtrHld free_data);
@@ -57,7 +59,8 @@ void TArray_set_count(TArray * arr , TLint count);
 
 
 typedef TArray TArrayData;
-void TArrayData_init(TArrayData* arr);
+TArrayData* TArrayData_new();
+TArrayData *TArrayData_init(TArrayData* arr);
 void TArrayData_clean(TArray *arr);
 void TArrayData_add_clone(TArray *arr, TData* item);
 void TArrayData_add_presistent(TArray *arr, TData* item);

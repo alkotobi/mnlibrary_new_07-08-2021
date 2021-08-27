@@ -5,6 +5,7 @@
 #define ARRAY_MIN_SIZE 250
 typedef long int TLint ;
 typedef void** TPtrHld ;
+typedef char** TCstrHld ;
 #define $P(X) (TPtrHld)(&X)
 typedef void** TValues ;
 typedef void* TVar;

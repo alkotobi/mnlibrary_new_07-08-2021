@@ -5,6 +5,7 @@ char mnfield_test()
 {
 
     char res=1;
+    res=res*TFieldArray_item_by_name_test();
     res=res* mnfield_TData_test();
     res=res*mnfield_new_int_t();
     res=res*mnfield_new_double_t();
@@ -127,6 +128,20 @@ char mnfield_TData_test()
     char ret = TData_isEqual(d,d1) ;
     test_v1(ret);
 
+
     return ret;
 
+}
+
+char TFieldArray_item_by_name_test()
+{
+    print_blue("tetsing TFieldArray_item_by_name...\n");
+    TFieldArray* flds=TFieldArray_init(TFieldArray_new());
+    TFieldArray_add(flds,mnfield_new_int("age",43));
+    TFieldArray_add(flds,mnfield_new_cloned_cstring("name","Noureddine"));
+    TFieldArray_add(flds,mnfield_new_double("salary",2000.0));
+    TField* fld=TFieldArray_item_by_name(flds,"name");
+    char ret=cstring_is_equal(mnfield_val_to_new_cstring(fld),"Noureddine");
+    test_v1(ret);
+    return ret;
 }

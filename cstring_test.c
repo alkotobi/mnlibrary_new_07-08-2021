@@ -16,7 +16,7 @@ char cstring_add_chars_test()
     print_blue("cstring_add_chars>>>>>\n");
     char* str =cstring_new_clone("hello world!");
     str[6]=0;
-    cstring_add_chars(str,"mimi");
+    cstring_add(&str,"mimi");
 
     char ret = cstring_is_equal(str,"hello mimi");
     test_v1(ret);

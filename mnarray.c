@@ -1,11 +1,16 @@
 #include "mnarray.h"
 
 
-
+void TArrayParams_init(struct TArrayPrv* prv){
+    prv->array=0;
+    prv->count=0;
+    prv->size=0;
+}
 TArray *TArray_new()
 {
     TArray* a=(TArray*)malloc(sizeof (TArray));
     assert(a);
+    TArrayParams_init(&a->params_prv);
     return a;
 }
 
@@ -23,25 +28,21 @@ void TArray_init_methods(TArray* arr){
     arr->methods.find_first_item=(TFLintVarVar)TArray_find;
     arr->methods.add_or_replace_item=(TFVoidVarVar)TArray_add_or_replace;
 }
-void TArray_init(TArray *arr)
+TArray* TArray_init(TArray *arr)
 {
-    TArray_init_v1(arr,ARRAY_MIN_SIZE);
+    return  TArray_init_v1(arr,ARRAY_MIN_SIZE);
 
 }
-void TArray_init_v1(TArray *arr,TLint size)
+TArray* TArray_init_v1(TArray *arr,TLint size)
 {
     arr->params_prv.array=TValues_new(size);
     arr->params_prv.count=0;
     arr->params_prv.size=ARRAY_MIN_SIZE;
     TArray_init_methods(arr);
-}
-
-TArray *TArray_new_init()
-{
-    TArray* arr=TArray_new();
-    TArray_init(arr);
     return arr;
 }
+
+
 
 void TArray_add(TArray* arr,TVar item)
 {
@@ -115,7 +116,11 @@ void TArray_free(TPtrHld arr)
     *arr=0;
 }
 
-void TArrayData_init(TArrayData* arr)
+
+TArrayData* TArrayData_new(){
+    return TArray_new();
+}
+TArrayData* TArrayData_init(TArrayData* arr)
 {
     TArray_init(arr);
     arr->methods.clean=(TFVoidVarVar)TArrayData_clean;
@@ -123,7 +128,7 @@ void TArrayData_init(TArrayData* arr)
     arr->methods.add_item_ref=(TFVoidVarVar)TArrayData_add_presistent;
     arr->methods.find_first_item=(TFLintVarVar)TArrayData_find_first;
     arr->methods.add_or_replace_item=(TFVoidVarVar)TArrayData_add_or_replace;
-
+    return arr;
 }
 
 void TArrayData_clean(TArray *arr)

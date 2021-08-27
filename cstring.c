@@ -3,6 +3,9 @@
 
 TLint cstring_count(const char *str)
 {
+    if (!str) {
+        return 0;
+    }
     TLint j;j=0;
     for(;;){
         if(str[j]=='\0'){
@@ -176,6 +179,15 @@ void cstring_add_chars(TCstring str,TCstring chars){
     str[i]=0;
 
 }
+void cstring_add(TCstrHld master_str,const char* to_add_str){
+    TCstrings* strs =TCstrings_init(TCstrings_new());
+    TCstrings_add(strs,*master_str);
+    TCstrings_add_clone(strs,to_add_str);
+    char* ret=TCstrings_concat(strs,"");
+    TCstrings_clean_free(&strs);
+    *master_str =ret;
+
+}
 void cstring_init_Tdata(TData* data, const char* str){
     TData_init (CString,data,(TVar)str,cstring_free,
                 (TFVarVar)cstring_new_clone,
@@ -210,9 +222,9 @@ TCstrings *TCstrings_new()
     return TArray_new();
 }
 
-void TCstrings_init(TCstrings *str_list)
+TCstrings* TCstrings_init(TCstrings *str_list)
 {
-    TArray_init(str_list);
+    return TArray_init(str_list);
 }
 
 void TCstrings_clean(TCstrings *str_list){
@@ -225,9 +237,22 @@ void TCstrings_free(TCstrings **str_list)
     *str_list=0;
 }
 
-void TCstrings_add(TCstrings *str_list, TCstring str)
+void TCstrings_clean_free(TCstrings **str_list){
+    TCstrings_clean(*str_list);
+    TCstrings_free(str_list);
+}
+
+char* TCstrings_add(TCstrings *str_list, TCstring str)
 {
     TArray_add(str_list,str);
+    return str;
+}
+
+char* TCstrings_add_clone(TCstrings *str_list,const char* str)
+{
+    char* _str =cstring_new_clone(str);
+    TArray_add(str_list,cstring_new_clone(str));
+    return _str;
 }
 
 TCstring TCstrings_concat(TCstrings *str_list, TCstring end_line)
