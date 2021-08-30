@@ -13,9 +13,9 @@ char mnrecord_test(){
     mnfield* fld1= TO_TRASH_FLD(mnfield_new_int("ID",0));
     mnfield* fld2= TO_TRASH_FLD(mnfield_new_cloned_cstring("name","Nour"));
     mnfield* fld3= TO_TRASH_FLD(mnfield_new_double("price",12.5));
-    char res = mnfield_is_equal(mnrecord_field_byind_ref(rcd,1),fld1);
-    res=res*mnfield_is_equal(mnrecord_field_byind_ref(rcd,2),fld2);
-    res=res*mnfield_is_equal(mnrecord_field_byind_ref(rcd,3),fld3);
+    char res = mnfield_is_equal(mnrecord_field_byind_ref(rcd,2),fld1);
+    res=res*mnfield_is_equal(mnrecord_field_byind_ref(rcd,3),fld2);
+    res=res*mnfield_is_equal(mnrecord_field_byind_ref(rcd,4),fld3);
     test(res,"working...\n");
     print_blue("tetsing mnrecord_sql_create_table...\n");
     char* sql=mnrecord_sql_create_table(rcd,"Table");

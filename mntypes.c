@@ -75,8 +75,8 @@ TData* TData_clone(TData *data)
 {
     assert(data->clone_val);
     TData* d = TData_new();
-    TVar val=data->clone_val(TData_value(data));
-    TData_set_value(d,val);
+    TVariant* var=TVariant_clone(TData_variant(data),data->clone_val);
+    TData_set_variant(d,var);
     TData_clone_properties(data,d);
     TData_clone_methods(data,d);
     return d;
@@ -399,4 +399,11 @@ void TVariant_clean_free(TVariant **var_hld)
 {
     TVariant_clean(*var_hld);
     TVariant_free(var_hld);
+}
+
+TVariant *TVariant_clone(TVariant *var, TFVarVar clone_val)
+{
+    return TVariant_init(TVariant_new(),
+                               TVariant_type(var),clone_val(TVariant_value(var)),
+                               TVariant_name(var),var->free_me);
 }

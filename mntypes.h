@@ -66,6 +66,7 @@ void TVariant_set_value(TVariant* var ,TVar value);
 TTypes TVariant_type(TVariant* var);
 void TVariant_set_type(TVariant* var,TTypes data_type);
 void TVariant_clean_free(TVariant** var_hld);
+TVariant* TVariant_clone(TVariant* var,TFVarVar clone_val);
 
 struct TDataPriv{
 

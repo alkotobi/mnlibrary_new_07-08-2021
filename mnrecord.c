@@ -11,7 +11,7 @@ mnrecord* mnrecord_new_v0(){
     mnrecord* rcd= malloc(sizeof (mnrecord));
     assert(rcd);
     mnrecord_prv_init(&rcd->prv);
-    rcd->prv.flds =TArray_new();
+    rcd->prv.flds =TArray_init(TArray_new());
     return rcd;
 }
 
@@ -25,30 +25,12 @@ mnrecord *mnrecord_new()
     fld=mnfield_new_int(MASTER_ID,-1);
     mnfield_set_generated(fld,1);
     mnrecord_add_field_byref(rcd,fld);
-    fld=mnfield_new_int(IS_EDITED,0);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
-    fld=mnfield_new_int(IS_NEW,1);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
-    fld=mnfield_new_int(IS_DELETED,0);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
     return rcd;
 
 }
 
 mnrecord* mnrecord_new_no_id(){
     mnrecord* rcd= mnrecord_new_v0();
-    mnfield* fld=mnfield_new_int(IS_EDITED,0);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
-    fld=mnfield_new_int(IS_NEW,0);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
-    fld=mnfield_new_int(IS_DELETED,0);
-    mnfield_set_generated(fld,0);
-    mnrecord_add_field_byref(rcd,fld);
     return rcd;
 }
 
