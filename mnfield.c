@@ -30,13 +30,14 @@ TField* mnfield_init(TField* fld,TData* data ,char is_generatated,
     fld->private.fixed_width=fixed_width;
     fld->private.caption=cstring_new_clone(caption);
     fld->private.data=data;
+    fld->private.is_generated=is_generatated;
     TData_set_name(fld->private.data,name);
-    TData_set_visible(TField_data(fld),is_generatated);
+    //TData_set_visible(TField_data(fld),is_generatated);
     return fld;
 }
 
 TField* mnfield_init_v1(TField* fld,TData* data,const char* name){
-    return  mnfield_init(fld,data,0,0,0,0,0,name);
+    return  mnfield_init(fld,data,1,0,0,0,0,name);
 }
 
 void mnfield_clean(TField *fld)
@@ -44,11 +45,14 @@ void mnfield_clean(TField *fld)
     TData* d=TField_data(fld);
     TData_clean(d);
     TData_free($P(d));
-    free(fld->private.caption);
+
 }
-
+void mnfield_clean_free(mnfield **fld){
+    mnfield_clean(*fld);
+    mnfield_free(fld);
+}
 void mnfield_free(mnfield** fld){
-
+    free((*fld)->private.caption);
     free(*fld);
     *fld=0;
 }
@@ -79,7 +83,7 @@ mnfield *mnfield_new_double(const char *name, double data)
 mnfield *mnfield_new_cloned_cstring(const char *name,const char* str)
 {
 
-    TData* d = cstring_new_TData(cstring_new_clone(str));
+    TData* d = TData_init_cstring(TData_new(),cstring_new_clone(str));
     mnfield* field =mnfield_new();
     mnfield_init_v1(field,d,name);
     return field;
@@ -117,7 +121,7 @@ void mnfield_setval_cstring(mnfield *field, const char *str)
 
 
 void mnfield_set_generated(mnfield*field,char is_generated){
-    TData_set_visible(TField_data(field),is_generated);
+    field->private.is_generated=is_generated;
 }
 
 int mnfield_int_val(mnfield *field)
@@ -131,10 +135,10 @@ double mnfield_double_val(mnfield *field)
 }
 
 TCstring mnfield_cstring_val_ref(mnfield* fld){
-    return  cstring_from_TData_ref(TField_data(fld));
+    return  TData_cstring(TField_data(fld));
 }
 TCstring mnfield_cstring_val_cpy(mnfield* fld){
-    return cstring_from_TData_cpy(TField_data(fld));
+    return cstring_new_clone(TData_cstring(TField_data(fld)));
 }
 
 void TField_clone_prop(TField* fld_src,TField* fld_des){
@@ -184,12 +188,12 @@ TCstring mnfield_val_to_new_cstring(mnfield* fld){
 
 char TField_is_generated(TField *fld)
 {
-    return TData_is_visible(TField_data(fld));
+    return fld->private.is_generated;
 }
 
 void TField_set_is_generated(TField *fld, char is_generated_bool)
 {
-    TData_set_visible(TField_data(fld),is_generated_bool);
+    fld->private.is_generated=is_generated_bool;
 }
 
 TData *TField_data(TField *fld)
@@ -199,11 +203,10 @@ TData *TField_data(TField *fld)
 
 void TField_set_data(TField *fld, TData *data)
 {
-    if (!TData_is_presistent(TField_data(fld))) {
+//    if (!TData_is_presistent(TField_data(fld))) {
         TData* d=TField_data(fld);
-        TData_clean(d);
-        TData_free($P(d));
-    }
+        TData_clean_free(&d);
+//    }
     fld->private.data=data;
 }
 
@@ -219,28 +222,20 @@ TCstring TField_name(TField *fld)
     return TData_name(TField_data(fld));
 }
 
-TDataField *TDataField_new()
-{
-    return TData_new();
-}
 
-TDataField* TDataField_init(TDataField *data_fld,TField* fld)
+
+TData* TData_init_field(TData *data_fld,TField* fld)
 {
-    TData_init(Field,data_fld,fld,TDataField_free_clean,
+    TData_init(Field,data_fld,fld,(TFVoidPtrHld)mnfield_clean_free,
                (TFVarVar)mnfield_clone,
                (TFCharVarVar)mnfield_is_equal,(TFCharVarVar)TField_is_greater);
     return data_fld;
 }
 
-TField* TDataField_field(TDataField* data_fdl){
+TField* TData_field(TData *data_fdl){
     return (TField*)TData_value(data_fdl);
 }
 
-void TDataField_free_clean(TPtrHld d)
-{
-    mnfield_clean(*d);
-    mnfield_free((TField**)d);
-}
 
 char TField_is_greater(TField *fld1, TField *fld2)
 {
@@ -250,39 +245,61 @@ char TField_is_greater(TField *fld1, TField *fld2)
     return TField_data(fld1)->is_greater(TField_data(fld1),TField_data(fld2));
 }
 
-TFieldArray *TFieldArray_new()
+TFields *TFields_new()
 {
-    return TArrayData_new();
+    return TArray_new();
 }
 
-TFieldArray * TFieldArray_init(TFieldArray *flds)
+TFields * TFields_init(TFields *flds)
 {
-    return TArrayData_init(flds);
+    return TArray_init(flds);
 }
 
-TField *TFieldArray_item_by_name(TFieldArray *flds, const char *name)
+TField *TFields_item_by_name(TFields *flds, const char *name)
 {
     for (TLint i=0;i<TArray_count(flds) ;i++ ) {
-        if (cstring_is_equal(TField_name(TFieldArray_item_at(flds,i)),name)) {
-            return TFieldArray_item_at(flds,i);
+        if (cstring_is_equal(TField_name(TFields_item_at(flds,i)),name)) {
+            return TFields_item_at(flds,i);
             break;
         }
     }
     return 0;
 }
 
-void TFieldArray_add(TFieldArray *flds, TField *fld)
+TField* TFields_add(TFields *flds, TField *fld)
 {
-    TArrayData_add(flds,TDataField_init(TDataField_new(),fld));
+    return (TField*) TArray_add(flds,fld);
 }
 
-TField *TFieldArray_item_at(TFieldArray *flds, TLint index)
+TField *TFields_item_at(TFields *flds, TLint index)
 {
-    TDataField* d = TArrayData_item_at(flds,index);
-    return TDataField_field(d);
+    return (TField*) TArray_item_at(flds,index);
+
 }
 
-void TFieldArray_clean(TFieldArray *flds)
+void TFields_clean(TFields *flds)
 {
-    TArrayData_clean(flds);
+    TArray_clean(flds,(TFVoidPtrHld)mnfield_clean_free);
+}
+
+TField *TTrash_add_field(TTrash *trash, TField *fld)
+{
+    TArrayData_add(trash,TData_init_field(TData_new(),fld));
+    return fld;
+}
+
+TField *TArray_add_field(TArray *arr, TField *fld)
+{
+    TArray_add(arr,(TVar)fld);
+    return fld;
+}
+
+TField *TArray_TField_at(TArray *flds, TLint index)
+{
+    return (TField*)TArray_item_at(flds,index);
+}
+
+void TArray_clean_field(TArray *arr)
+{
+    TArray_clean(arr,(TFVoidPtrHld)mnfield_clean_free);
 }

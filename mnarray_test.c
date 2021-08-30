@@ -73,14 +73,15 @@ char TArray_free_data_test()
 {
     print_blue("TArray_free\n");
     char* str =cstring_new_clone("hello");
-    TArray arr;
-    TArray_init(&arr);
-    TArray_add(&arr,str);
-    TArray_add(&arr,cstring_new_clone("yes"));
-    TArray_free_data(&arr,cstring_free);
-    char res = arr.params_prv.array==0;
+    TArray* arr=TArray_init(TArray_new());
+
+    TArray_add(arr,str);
+    TArray_add(arr,cstring_new_clone("yes"));
+    TArray_free_data(arr,cstring_free);
+    char res = arr->params_prv.count==0;
+    TArray_free($P(arr));
     test_v1(res);
-    return arr.params_prv.count==0;
+    return res;
 }
 
 char TArray_count_test()
@@ -160,12 +161,12 @@ char TArrayData_free_data_test()
     TCstring str1=cstring_new_clone("hello");
     TCstring str2=cstring_new_clone("me");
     TCstring str3=cstring_new_clone("third");
-    TData* data = cstring_new_TData(str3);
+    TData* data = TData_init_cstring(TData_new(),str3);
     TData_set_name(data,"charli");
     char* str = TData_name(data);
     str++;
-    TArrayData_add_presistent(&arr,cstring_new_TData(str1));
-    TArrayData_add(&arr,cstring_new_TData(str2));
+    TArrayData_add_presistent(&arr,TData_init_cstring(TData_new(),str1));
+    TArrayData_add(&arr,TData_init_cstring(TData_new(),str2));
     TArrayData_add_clone(&arr,data);
     TArrayData_clean(&arr);
     free(str1);
@@ -177,7 +178,7 @@ char TArrayData_free_data_test()
 TData *TArrayData_migrating_test()
 {
     TCstring str1=cstring_new_clone("hello");
-    TData* data = cstring_new_TData(str1);
+    TData* data = TData_init_cstring(TData_new(),str1);
     return data;
 }
 
@@ -187,7 +188,7 @@ char TArrayData_add_cpy_test()
     TArrayData arr;
     TArrayData_init(&arr);
     TCstring str3=cstring_new_clone("third");
-    TData* data = cstring_new_TData(str3);
+    TData* data = TData_init_cstring(TData_new(),str3);
     TArrayData_add_clone(&arr,data);
     TArrayData_clean(&arr);
     TData_clean(data);
@@ -202,7 +203,7 @@ char TArrayData_add_ref_test()
     TArrayData arr;
     TArrayData_init(&arr);
     TCstring str3=cstring_new_clone("third");
-    TData* data = cstring_new_TData(str3);
+    TData* data = TData_init_cstring(TData_new(),str3);
     TArrayData_add(&arr,data);
     TArrayData_clean(&arr);
     //TData_clean(data);
@@ -219,11 +220,11 @@ char TArrayData_find_first_test()
     TCstring str1=cstring_new_clone("hello");
     TCstring str2=cstring_new_clone("me");
     TCstring str3=cstring_new_clone("third");
-    TData* data = cstring_new_TData(str3);
-    TArrayData_add_presistent(&arr,cstring_new_TData(str1));
-    TArrayData_add(&arr,cstring_new_TData(str2));
+    TData* data = TData_init_cstring(TData_new(),str3);
+    TArrayData_add_presistent(&arr,TData_init_cstring(TData_new(),str1));
+    TArrayData_add(&arr,TData_init_cstring(TData_new(),str2));
     TArrayData_add_clone(&arr,data);
-    data = cstring_new_TData("third");
+    data = TData_init_cstring(TData_new(),cstring_new_clone("third"));
     TLint index= TArrayData_find_first(&arr,data);
     TData_free($P(data));
     TArrayData_clean(&arr);
@@ -241,11 +242,11 @@ char TArrayData_add_or_replace_test()
     TCstring str1=cstring_new_clone("hello");
     TCstring str2=cstring_new_clone("me");
     TCstring str3=cstring_new_clone("third");
-    TData* data = cstring_new_TData(str3);
-    TArrayData_add_presistent(&arr,cstring_new_TData(str1));
-    TArrayData_add(&arr,cstring_new_TData(str2));
+    TData* data = TData_init_cstring(TData_new(),str3);
+    TArrayData_add_presistent(&arr,TData_init_cstring(TData_new(),str1));
+    TArrayData_add(&arr,TData_init_cstring(TData_new(),str2));
     TArrayData_add_clone(&arr,data);
-    data = cstring_new_TData("third");
+    data = TData_init_cstring(TData_new(),cstring_new_clone("third"));
     TArrayData_add_or_replace(&arr,data);
     TLint index= TArrayData_find_first(&arr,data);
     char ret=TArray_count(&arr)==3;

@@ -11,7 +11,7 @@ struct mnrecord_prv{
     char is_new;
     char is_changed;
     char is_deleted;
-    TFieldArray* flds;
+    TFields* flds;
 };
 
 void mnrecord_prv_init(struct mnrecord_prv* prv);

@@ -121,10 +121,10 @@ char mnfield_clone_t()
 char mnfield_TData_test()
 {
     print_blue("tetsing TDataField_is_equal...\n");
-    TDataField* d=TDataField_new();
-    TDataField_init(d,mnfield_new_int("age",43));
-    TDataField* d1=TDataField_new();
-    TDataField_init(d1,mnfield_new_int("age",43));
+    TData* d=TData_new();
+    TData_init_field(d,mnfield_new_int("age",43));
+    TData* d1=TData_new();
+    TData_init_field(d1,mnfield_new_int("age",43));
     char ret = TData_isEqual(d,d1) ;
     test_v1(ret);
 
@@ -136,11 +136,11 @@ char mnfield_TData_test()
 char TFieldArray_item_by_name_test()
 {
     print_blue("tetsing TFieldArray_item_by_name...\n");
-    TFieldArray* flds=TFieldArray_init(TFieldArray_new());
-    TFieldArray_add(flds,mnfield_new_int("age",43));
-    TFieldArray_add(flds,mnfield_new_cloned_cstring("name","Noureddine"));
-    TFieldArray_add(flds,mnfield_new_double("salary",2000.0));
-    TField* fld=TFieldArray_item_by_name(flds,"name");
+    TFields* flds=TFields_init(TFields_new());
+    TFields_add(flds,mnfield_new_int("age",43));
+    TFields_add(flds,mnfield_new_cloned_cstring("name","Noureddine"));
+    TFields_add(flds,mnfield_new_double("salary",2000.0));
+    TField* fld=TFields_item_by_name(flds,"name");
     char ret=cstring_is_equal(mnfield_val_to_new_cstring(fld),"Noureddine");
     test_v1(ret);
     return ret;

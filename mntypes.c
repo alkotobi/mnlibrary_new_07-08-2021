@@ -20,46 +20,52 @@ TData *TData_new()
 {
     TData* d=(TData*)malloc(sizeof (TData));
     assert(d);
-    d->free_val=0;
+ //   d->free_val=0;
     d->clone_val=0;
     d->is_equal=0;
     d->is_greater=0;
-    d->priv.data_type=0;
-    d->priv.is_presistent=0;
-    d->priv.is_read_only=0;
-    d->priv.name=0;
-    d->priv.val=0;
-    d->priv.is_visible=1;
+    d->var=0;
+   // d->priv.data_type=0;
+    //d->priv.is_presistent=0;
+    //d->priv.is_read_only=0;
+//    d->priv.name=0;
+//    d->priv.val=0;
+    //d->priv.is_visible=1;
     return d;
 }
 
-void TData_init(TTypes data_type, TData *data, TVar val,
+TData* TData_init(TTypes data_type, TData *data, TVar val,
                 TFVoidPtrHld free_val, TFVarVar clone_val,
                 TFCharVarVar is_equal, TFCharVarVar is_greater)
 {
-    data->free_val=free_val;
+    //data->free_val=free_val;
     data->clone_val=clone_val;
     data->is_equal=is_equal;
     data->is_greater=is_greater;
-    data->priv.data_type=data_type;
-    data->priv.is_presistent=0;
-    data->priv.is_read_only=0;
-    data->priv.name=0;
-    data->priv.val=val;
+    data->var=TVariant_init(TVariant_new(),data_type,val,0,free_val);
+    //data->priv.data_type=data_type;
+    //data->priv.is_presistent=0;
+    //data->priv.is_read_only=0;
+    //data->priv.name=0;
+    //data->priv.val=val;
+    return data;
 
 }
 
 void TData_clean(TData *data)
 {
-    assert(!data->priv.is_presistent);
-    if(data->free_val){
-        data->free_val(&data->priv.val);
-    }
-    free(data->priv.name);
+    //assert(!data->priv.is_presistent);
+
+        TVariant_clean(data->var);
+        TVariant_free(&data->var);
+        //data->free_val(&data->priv.val);
+
+
 }
 
 void TData_free(TPtrHld data)
 {
+    //free(((TData *)(*data))->priv.name);
     free(*data);
     *data=0;
 }
@@ -80,26 +86,37 @@ TData* TData_clone(TData *data)
 TData *TData_new_persistent(TData *data)
 {
     TData* d = TData_new();
-    d->priv.val=data->priv.val;
+    d->var=data->var;
     TData_clone_methods(data,d);
     TData_clone_properties(data,d);
-    TData_set_presistent(d,1);
+    //TData_set_presistent(d,1);
     return d;
 }
 
+TVariant* TData_variant(TData* data){
+    return data->var;
+}
+
+void TData_set_variant(TData* data,TVariant* var){
+    if (TData_variant(data)) {
+        TVariant_clean(data->var);
+        TVariant_free(&data->var);
+    }
+    data->var=var;
+}
 void TData_clone_methods(TData *data_src, TData *data_des)
 {
     data_des->clone_val=data_src->clone_val;
-    data_des->free_val=data_src->free_val;
+    data_des->var->free_me=data_src->var->free_me;
     data_des->is_equal=data_src->is_equal;
     data_des->is_greater=data_src->is_greater;
 }
 
 void TData_clone_properties(TData* data_src,TData* data_des){
-    TData_set_readonly(data_des,TData_is_read_only(data_src));
-    TData_set_presistent(data_des,TData_is_presistent(data_src));
+    //TData_set_readonly(data_des,TData_is_read_only(data_src));
+    //TData_set_presistent(data_des,TData_is_presistent(data_src));
     TData_set_name(data_des,TData_name(data_src));
-    TData_set_visible(data_des,TData_is_visible(data_src));
+    //TData_set_visible(data_des,TData_is_visible(data_src));
     TData_set_type(data_des,TData_type(data_src));
 }
 
@@ -132,41 +149,34 @@ int TData_int_val(TData *d)
 TVar TData_value(TData *d)
 {
 
-    return (d->priv.val);
+    return (TVariant_value(d->var));
 }
 
 void TData_set_value(TData *d, TVar val)
 {
-    assert(!TData_is_read_only(d));
-    if (!TData_is_presistent(d)) {
-        if (d->free_val) {
-            d->free_val($P(d->priv.val));
-        }
-
-    }
-
-    d->priv.val=val;
+    //assert(!TData_is_read_only(d));
+    TVariant_set_value(d->var,val);
 }
 
-char TData_is_read_only(TData *d)
-{
-    return d->priv.is_read_only;
-}
+//char TData_is_read_only(TData *d)
+//{
+//    return d->priv.is_read_only;
+//}
 
-char TData_is_presistent(TData *d)
-{
-    return d->priv.is_presistent;
-}
+//char TData_is_presistent(TData *d)
+//{
+//    return d->priv.is_presistent;
+//}
 
-void TData_set_readonly(TData *d, char valbool)
-{
-    d->priv.is_read_only=valbool;
-}
+//void TData_set_readonly(TData *d, char valbool)
+//{
+//    d->priv.is_read_only=valbool;
+//}
 
-void TData_set_presistent(TData *d, char valbool)
-{
-    d->priv.is_presistent=valbool;
-}
+//void TData_set_presistent(TData *d, char valbool)
+//{
+//    d->priv.is_presistent=valbool;
+//}
 TLint TData_name_size(const char *name)
 {
     TLint j;j=0;
@@ -196,14 +206,13 @@ char *TData_clone_name(const  char *name)
 
 void TData_set_name(TData *d, const char *name)
 {
-    free(d->priv.name);
-    d->priv.name=TData_clone_name(name);
+    TVariant_set_name(TData_variant(d),name);
 
 }
 
 char *TData_name(TData *d)
 {
-    return d->priv.name;
+    return TVariant_name(TData_variant(d));
 }
 
 void int_free(TPtrHld i){
@@ -290,20 +299,104 @@ double TDataDouble_val(TDataDouble *i)
 
 TTypes TData_type(TData *d)
 {
-    return d->priv.data_type;
+    return TVariant_type(TData_variant(d));
 }
 
-char TData_is_visible(TData *d)
-{
-    return d->priv.is_visible;
-}
+//char TData_is_visible(TData *d)
+//{
+//    return d->priv.is_visible;
+//}
 
-void TData_set_visible(TData *d, char visible_bool)
-{
-    d->priv.is_visible=visible_bool;
-}
+//void TData_set_visible(TData *d, char visible_bool)
+//{
+//    d->priv.is_visible=visible_bool;
+//}
 
 void TData_set_type(TData *d, TTypes data_type)
 {
-    d->priv.data_type=data_type;
+    TVariant_set_type(TData_variant(d),data_type);
+}
+
+void TData_clean_free(TData **data_hld)
+{
+    TData_clean(*data_hld);
+    TData_free((TPtrHld)data_hld);
+}
+
+TVariant *TVariant_init(TVariant *var, TTypes data_type, TVar val,
+                        const char *name, TFVoidPtrHld free_me)
+{
+    var->data_type=data_type;
+    var->name=TData_clone_name(name);
+    var->val=val;
+    var->free_me=free_me;
+    return var;
+}
+
+void TVariant_clean(TVariant *var)
+{
+    if (var->free_me){
+    var->free_me($P(var->val));
+    }
+}
+
+TVariant *TVariant_new()
+{
+    TVariant* var = (TVariant*) malloc(sizeof (TVariant));
+    assert(var);
+    var->data_type=-1;
+    var->name=0;
+    var->val=0;
+    var->free_me=0;
+    return var;
+}
+
+void TVariant_free(TVariant **var_hld)
+{
+    free((*var_hld)->name);
+    free(*var_hld);
+    *var_hld=0;
+}
+
+char *TVariant_name(TVariant *var)
+{
+    return var->name;
+}
+
+void TVariant_set_name(TVariant *var, const char *name)
+{
+    char* str =var->name;
+    var->name=TData_clone_name(name);
+    if(str) free(str);
+}
+
+TVar TVariant_value(TVariant *var)
+{
+    return var->val;
+}
+
+void TVariant_set_value(TVariant *var, TVar value)
+{
+    assert(var);
+    if (var->free_me) {
+        var->free_me($P(var->val));
+    }
+    if(var)
+    var->val=value;
+}
+
+TTypes TVariant_type(TVariant *var)
+{
+    return var->data_type;
+}
+
+void TVariant_set_type(TVariant *var, TTypes data_type)
+{
+    var->data_type=data_type;
+}
+
+void TVariant_clean_free(TVariant **var_hld)
+{
+    TVariant_clean(*var_hld);
+    TVariant_free(var_hld);
 }

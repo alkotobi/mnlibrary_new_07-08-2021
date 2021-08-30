@@ -53,7 +53,7 @@ mnrecord* mnrecord_new_no_id(){
 }
 
 void mnrecord_free(mnrecord* record){
-    TFieldArray_clean(record->prv.flds);
+    TFields_clean(record->prv.flds);
     TArray_free($P(record->prv.flds));
     free(record);
 }
@@ -63,7 +63,7 @@ void mnrecord_printf(mnrecord* record){
     TCstring str;
     double d;
     for (TLint i=0;i<(TArray_count(mnrecord_fields(record))) ;i++ ) {
-        if (!TField_is_generated(TFieldArray_item_at(mnrecord_fields(record),i))) {
+        if (!TField_is_generated(TFields_item_at(mnrecord_fields(record),i))) {
             continue;
         }
         mnfield* fld = mnrecord_field_byind_ref(record,i);
@@ -98,22 +98,22 @@ void mnrecord_printf_title(mnrecord* record){
     printf("\n");
 }
 void mnrecord_add_field_byref(mnrecord* self,mnfield* field){
-    TFieldArray_add(mnrecord_fields(self),field);
+    TFields_add(mnrecord_fields(self),field);
 }
 
 void mnrecord_add_field_bycpy(mnrecord* self,mnfield* field){
-    TFieldArray_add(mnrecord_fields(self),mnfield_clone(field));
+    TFields_add(mnrecord_fields(self),mnfield_clone(field));
 }
 
 mnfield* mnrecord_field_byind_ref(mnrecord* self,TLint ind){
     if (ind>=TArray_count(mnrecord_fields(self)) || ind<0) {
         return 0;
     }
-    return  TFieldArray_item_at(mnrecord_fields(self),ind);
+    return  TFields_item_at(mnrecord_fields(self),ind);
 }
 
 mnfield* mnrecord_field_byname_ref(mnrecord* self, const char* name){
-   return TFieldArray_item_by_name(mnrecord_fields(self),name);
+   return TFields_item_by_name(mnrecord_fields(self),name);
 }
 //TODO: test
 

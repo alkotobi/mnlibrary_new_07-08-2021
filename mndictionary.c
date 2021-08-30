@@ -41,7 +41,7 @@ void TDictionary_add(TDictionary *dic,TData* item)
         TLinkedListData_add_or_replace(data,item);
     }else {
         TLinkedListData* data = TLinkedListData_new(item);
-        TArray_set_item_at(dic,data,index);
+        TArray_set_item_at(dic,data,index,0);
     }
     TArray_set_count(dic,TArray_count(dic)+1);
 }
@@ -61,7 +61,7 @@ void TDictionary_expend(TDictionary **dic)
                 data=d;
             }
             free(d);
-            TArray_set_item_at(*dic,0,i);
+            TArray_set_item_at(*dic,0,i,0);
         }
     }
     TArray_clean(*dic,0);

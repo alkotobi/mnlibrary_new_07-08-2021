@@ -18,6 +18,7 @@ SOURCES += \
         mnlinked_list.c \
         mnobject.c \
         mnrecord.c \
+        mnrecord_test.c \
         mnstring.c \
         mntypes.c \
         test.c
@@ -36,6 +37,7 @@ HEADERS += \
     mnlinked_list.h \
     mnobject.h \
     mnrecord.h \
+    mnrecord_test.h \
     mnstring.h \
     mntypes.h \
     test.h

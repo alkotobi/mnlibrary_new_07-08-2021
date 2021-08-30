@@ -24,7 +24,8 @@ typedef enum {
     CString,
     Double,
     Int,
-    Field
+    Field,
+    MNString
 } TTypes ;
 typedef TVar (*TFVarVar)(TVar);
 typedef char(*TFCharVarVar)(TVar,TVar) ;
@@ -43,55 +44,74 @@ void TValues_free(TValues *arr);
 
 
 
-struct TDataMethods{
 
-};
-
-struct TDataPriv{
+struct TVariant{
     TTypes data_type;
     TVar val;
+    char* name;
+    TFVoidPtrHld free_me;
+};
+typedef struct TVariant TVariant ;
+
+TVariant* TVariant_init(TVariant* var,     TTypes data_type,
+              TVar val,
+              const char *name,TFVoidPtrHld free_me);
+void TVariant_clean(TVariant * var);
+TVariant* TVariant_new();
+void TVariant_free(TVariant** var_hld);
+char* TVariant_name(TVariant* var);
+void TVariant_set_name(TVariant* var,const char* name);
+TVar TVariant_value(TVariant* var);
+void TVariant_set_value(TVariant* var ,TVar value);
+TTypes TVariant_type(TVariant* var);
+void TVariant_set_type(TVariant* var,TTypes data_type);
+void TVariant_clean_free(TVariant** var_hld);
+
+struct TDataPriv{
+
     char is_read_only;
     char is_presistent;// cant free
-    char* name;
     char is_visible;
 };
 
 struct TData{
-   struct TDataMethods methods;
-   struct TDataPriv priv;
-   TFVoidPtrHld free_val;
-   TFVarVar clone_val;
-   TFCharVarVar is_equal;
-   TFCharVarVar is_greater;
+    //struct TDataPriv priv;
+    TVariant* var;
+    TFVarVar clone_val;
+    TFCharVarVar is_equal;
+    TFCharVarVar is_greater;
 
 };
 
 typedef struct TData TData ;
 TData* TData_new();
-void TData_init(TTypes data_type,TData* data, TVar val, TFVoidPtrHld free_val,
-                TFVarVar clone_val,TFCharVarVar is_equal,TFCharVarVar is_greater);
+TData *TData_init(TTypes data_type,TData* data, TVar val, TFVoidPtrHld free_val,
+                  TFVarVar clone_val,TFCharVarVar is_equal,TFCharVarVar is_greater);
 void TData_init_v1(TTypes data_type,TData* data,  TVar val, TFVoidPtrHld free_val);
 void TData_init_v2(TTypes data_type,TData* data,  TVar val, TFVoidPtrHld free_val,
                    TFVarVar clone_val);
 void TData_clean(TData* data);
 void TData_free(TPtrHld data);
+void TData_clean_free(TData ** data_hld);
 TData *TData_clone(TData*data);
 void TData_clone_methods(TData* data_src,TData* data_des);
 void TData_clone_properties(TData* data_src,TData* data_des);
 TData *TData_new_persistent(TData*data);
+void TData_set_variant(TData* data,TVariant* var);
+TVariant* TData_variant(TData* data);
 char TData_isEqual(TData* d1,TData*d2);
 int TData_int_val(TData* d);
 TVar TData_value(TData* d);
 void TData_set_value(TData* d,  TVar val);
-char TData_is_read_only(TData* d);
-char TData_is_presistent(TData* d);
-void TData_set_readonly(TData*d , char valbool);
-void TData_set_presistent(TData*d , char valbool);
+//char TData_is_read_only(TData* d);
+//char TData_is_presistent(TData* d);
+//void TData_set_readonly(TData*d , char valbool);
+//void TData_set_presistent(TData*d , char valbool);
 void TData_set_name(TData*d , const char *name);
 char* TData_name(TData* d);
 TTypes TData_type(TData* d);
-char TData_is_visible(TData*d);
-void TData_set_visible(TData*d,char visible_bool);
+//char TData_is_visible(TData*d);
+//void TData_set_visible(TData*d,char visible_bool);
 void TData_set_type(TData *d, TTypes data_type);
 typedef TData TDataInt ;
 void TDataInt_init(TDataInt* data,int val);

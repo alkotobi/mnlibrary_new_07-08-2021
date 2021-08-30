@@ -17,6 +17,7 @@ struct TFieldPrv{
     int width;
     int max_width;
     int fixed_width;
+    char is_generated;
     TData* data;
     TCstring caption;
 };
@@ -33,12 +34,13 @@ void TField_set_is_generated(TField* fld ,char is_generated_bool);
 TData* TField_data(TField* fld);
 void TField_set_data(TField* fld,TData* data);
 mnfield *mnfield_new();
-TField *mnfield_init(TField* fld, TData *data, char is_generatated,
+TField *mnfield_init(TField* fld, TData *data,char is_generated,
                   int width, int max_width, int fixed_width,
                   TCstring caption, const char *name);
 TField *mnfield_init_v1(TField* fld, TData* data, const char *name);
 void mnfield_free(mnfield **fld);
 void mnfield_clean(TField* fld);
+void mnfield_clean_free(mnfield **fld);
 void mnfield_dest(TField* fld);
 mnfield* mnfield_clone(mnfield* i);
 char mnfield_is_equal(mnfield* in1,mnfield* in2);
@@ -63,22 +65,25 @@ char mnfield_is_equal(mnfield* fld1,mnfield* fld2);
 TCstring mnfield_val_to_new_cstring(mnfield* fld);
 TTypes TField_type(TField* fld);
 TCstring TField_name(TField* fld);
-typedef TData TDataField ;
-TDataField* TDataField_new();
-TDataField *TDataField_init(TDataField* data_fld, TField *fld);
 
-TField* TDataField_field(TDataField* data_fdl);
-void TDataField_free_clean(TPtrHld d);
+TData *TData_init_field(TData* data_fld, TField *fld);
+
+TField* TData_field(TData* data_fdl);
 char TField_is_greater(TField* fld1,TField* fld2);
 
-typedef  TArrayData TFieldArray;
-TFieldArray* TFieldArray_new();
-TFieldArray *TFieldArray_init(TFieldArray* flds);
-void TFieldArray_clean(TFieldArray* flds);
-void TFieldArray_add(TFieldArray* flds,TField* fld);
-TField* TFieldArray_item_by_name(TFieldArray* flds,const char* name);
-TField* TFieldArray_item_at(TFieldArray* flds,TLint index);
+typedef  TArrayData TFields;
+TFields* TFields_new();
+TFields *TFields_init(TFields* flds);
+void TFields_clean(TFields* flds);
+TField *TFields_add(TFields* flds,TField* fld);
+TField* TFields_item_by_name(TFields* flds,const char* name);
+TField* TFields_item_at(TFields* flds,TLint index);
+TField* TTrash_add_field(TTrash* trash,TField*fld);
+#define TO_TRASH_FLD(X) TTrash_add_field(_trash,X)
 
+TField* TArray_add_field(TArray*arr , TField* fld);
+TField* TArray_TField_at(TArray* flds,TLint index);
+void TArray_clean_field(TArray* arr);
 #ifdef __cplusplus
 }
 #endif

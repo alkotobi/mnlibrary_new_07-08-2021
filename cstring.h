@@ -23,11 +23,8 @@ void cstring_free(void** str);
 char cstring_is_greater(const char *str1, const char *str2);
 //void cstring_add_chars(TCstring str,TCstring chars);
 void cstring_add(TCstrHld master_str, const char *to_add_str);
-void cstring_init_Tdata(TData* data, const char *str);
-TData* cstring_new_TData(const char *str);
-TData cstring_to_TData(TCstring str);
-TCstring cstring_from_TData_ref(TData* data);
-TCstring cstring_from_TData_cpy(TData* data);
+TData *TData_init_cstring(TData* data, const char *str);
+char* TData_cstring(TData* d);
 typedef TArray TCstrings ;
 TCstrings *TCstrings_new();
 TCstrings *TCstrings_init(TCstrings* str_list);
@@ -40,6 +37,9 @@ TCstring TCstrings_concat(TCstrings *str_list, TCstring end_line);
 TLint TCstrings_char_count(TCstrings* str_list);
 TCstring TCstrings_item_at(TCstrings* str_list, TLint index);
 char* TCstrings_concat_multi(const char *str,...);
+char* TArray_add_cstring(TArray* arr,char* str);
+char* TArray_cstring_at(TArray* arr,TLint index);
+void TArray_clean_cstring(TArray*arr);
 
 #ifdef __cplusplus
 }

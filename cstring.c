@@ -188,34 +188,17 @@ void cstring_add(TCstrHld master_str,const char* to_add_str){
     *master_str =ret;
 
 }
-void cstring_init_Tdata(TData* data, const char* str){
-    TData_init (CString,data,(TVar)str,cstring_free,
+TData* TData_init_cstring(TData* data, const char* str){
+    return  TData_init (CString,data,(TVar)str,cstring_free,
                 (TFVarVar)cstring_new_clone,
                 (TFCharVarVar)cstring_is_equal,
                 (TFCharVarVar)cstring_is_greater);
 }
 
-TData *cstring_new_TData(const char* str)
-{
-    TData* data= TData_new();
-    cstring_init_Tdata(data,str);
-    return data;
+char* TData_cstring(TData* d){
+    return   (TCstring) TData_value(d);
 }
 
-TData cstring_to_TData(TCstring str)
-{
-    TData data;
-    cstring_init_Tdata(&data,str);
-    return data;
-}
-
-TCstring cstring_from_TData_ref(TData* data){
-
-    return  (TCstring) TData_value(data);
-}
-TCstring cstring_from_TData_cpy(TData* data){
-    return  cstring_new_clone( (TCstring) TData_value(data));
-}
 
 TCstrings *TCstrings_new()
 {
@@ -326,4 +309,20 @@ char* TCstrings_concat_multi(const char *str,...){
     TCstrings_clean(list);
     TCstrings_free(&list);
     return  s;
+}
+
+char *TArray_add_cstring(TArray *arr, char *str)
+{
+    TArray_add(arr,(TVar)str);
+    return str;
+}
+
+char *TArray_cstring_at(TArray *arr, TLint index)
+{
+    return (char*)TArray_item_at(arr,index);
+}
+
+void TArray_clean_cstring(TArray *arr)
+{
+    TArray_clean(arr,cstring_free);
 }
