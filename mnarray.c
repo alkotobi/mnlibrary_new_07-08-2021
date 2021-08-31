@@ -5,6 +5,7 @@ void TArrayParams_init(struct TArrayPrv* prv){
     prv->array=0;
     prv->count=0;
     prv->size=0;
+    prv->index=0;
 }
 TArray *TArray_new()
 {
@@ -96,6 +97,32 @@ void TArray_set_count(TArray * arr , TLint count){
     arr->params_prv.count=count;
 }
 
+TArray* TArray_clone(TArray* arr , TFVarVar clone_value){
+    TArray* a=TArray_init(TArray_new());
+    for (TLint i=0;i<TArray_count(arr) ;i++ ) {
+        TArray_add(a,clone_value(TArray_item_at(arr,i)));
+    }
+    return a;
+}
+
+char TArray_is_equal(TArray* arr1,TArray* arr2,TFCharVarVar vals_is_equal){
+    TLint i=0;
+    for (;i<TArray_count(arr1) ;i++ ) {
+        if(!vals_is_equal(TArray_item_at(arr1,i),TArray_item_at(arr2,i))){
+            return 0;
+        }
+    }
+    if (TArray_count(arr2)>i-1) return 0;
+    return 1;
+}
+
+TLint TArray_index(TArray* arr){
+    return arr->params_prv.index;
+}
+
+void TArray_set_index(TArray*arr,TLint index){
+    arr->params_prv.index=index;
+}
 
 TVar TArray_remove_item_ret_ref(TArray *arr, TLint index)
 {

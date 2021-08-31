@@ -169,7 +169,7 @@ char TArrayData_free_data_test()
     TArrayData_add(&arr,TData_init_cstring(TData_new(),str2));
     TArrayData_add_clone(&arr,data);
     TArrayData_clean(&arr);
-    free(str1);
+    //free(str1);
     //free(str2);
     test_v1(1);
     return 1;
@@ -228,7 +228,7 @@ char TArrayData_find_first_test()
     TLint index= TArrayData_find_first(&arr,data);
     TData_free($P(data));
     TArrayData_clean(&arr);
-    free(str1);
+    //free(str1);
     //free(str2);
     test_v1(index==2);
     return 1;

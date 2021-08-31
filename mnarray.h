@@ -25,6 +25,7 @@ struct TArrayPrv{
     TLint size;
     TLint count;
     TValues array;
+    TLint index;
 };
 
 void TArrayParams_init(struct TArrayPrv* prv);
@@ -56,6 +57,10 @@ TVar TArray_add_or_replace(TArray *arr, TVar item, TFVoidPtrHld free_me, TFCharV
 TVar TArray_set_item_at(TArray *arr, TVar item, TLint index, TFVoidPtrHld free_me);
 void TArray_set_all_to_zero(TArray*arr);
 void TArray_set_count(TArray * arr , TLint count);
+TArray* TArray_clone(TArray* arr , TFVarVar clone_value);
+char TArray_is_equal(TArray* arr1,TArray* arr2,TFCharVarVar vals_is_equal);
+TLint TArray_index(TArray* arr);
+void TArray_set_index(TArray*arr,TLint index);
 
 
 typedef TArray TArrayData;

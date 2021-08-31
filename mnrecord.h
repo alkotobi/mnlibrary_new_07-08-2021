@@ -31,6 +31,7 @@ mnrecord* mnrecord_new();
 mnrecord* mnrecord_new_v0();
 mnrecord* mnrecord_new_no_id();
 void mnrecord_free(mnrecord *record);
+void mnrecord_free_v0(mnrecord **record);
 void mnrecord_printf(mnrecord* record);
 void mnrecord_printf_title(mnrecord* record);
 void mnrecord_add_field_byref(mnrecord* self,mnfield* field);
@@ -76,6 +77,7 @@ TLint mnrecord_count(mnrecord* rdc);
 TArray* mnrecord_fields(mnrecord* rdc);
 char mnrecord_is_field_at_generated(mnrecord* rdc,TLint index);
 char* mnrecord_field_at_name(mnrecord* rdc,TLint index);
+
 
 
 

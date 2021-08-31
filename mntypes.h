@@ -67,7 +67,12 @@ TTypes TVariant_type(TVariant* var);
 void TVariant_set_type(TVariant* var,TTypes data_type);
 void TVariant_clean_free(TVariant** var_hld);
 TVariant* TVariant_clone(TVariant* var,TFVarVar clone_val);
-
+TVariant* TVariant_init_int(TVariant *var, int n);
+int TVariant_int(TVariant* var);
+TVariant* TVariant_init_double(TVariant *var, double n);
+double TVariant_double(TVariant* var);
+TVariant* TVariant_init_cstring(TVariant *var, const char* str);
+char* TVariant_cstring(TVariant* var);
 struct TDataPriv{
 
     char is_read_only;

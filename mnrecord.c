@@ -40,6 +40,10 @@ void mnrecord_free(mnrecord* record){
     free(record);
 }
 
+void mnrecord_free_v0(mnrecord **record){
+    mnrecord_free(*record);
+}
+
 void mnrecord_printf(mnrecord* record){
     int a=0;
     TCstring str;
@@ -62,7 +66,9 @@ void mnrecord_printf(mnrecord* record){
             d=mnfield_double_val(fld);
             printf(" %f  ",d);
             break;
-        default:break;
+        default:
+            assert(0);
+            break;
         }
     }
     printf("\n");

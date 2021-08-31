@@ -407,3 +407,55 @@ TVariant *TVariant_clone(TVariant *var, TFVarVar clone_val)
                                TVariant_type(var),clone_val(TVariant_value(var)),
                                TVariant_name(var),var->free_me);
 }
+
+TVariant *TVariant_init_int(TVariant* var,int n)
+{
+    int* i=(int*)malloc(sizeof (int));
+    assert(i);
+    *i=n;
+    var->val=i;
+    var->data_type=Int;
+    var->free_me= int_free;
+    return var;
+}
+
+
+int TVariant_int(TVariant *var)
+{
+    return *(int*) var->val;
+}
+
+TVariant *TVariant_init_double(TVariant *var, double n)
+{
+    double* i=(double*)malloc(sizeof (double));
+    assert(i);
+    *i=n;
+    var->val=i;
+    var->data_type=Double;
+    var->free_me= double_free;
+    return var;
+}
+
+double TVariant_double(TVariant *var)
+{
+    return *(double*)var->val;
+}
+
+void TData_free_name(char** name_hld){
+    free(*name_hld);
+    *name_hld=0;
+}
+TVariant *TVariant_init_cstring(TVariant *var, const char *str)
+{
+    var->val=TData_clone_name(str);
+    var->free_me=(TFVoidPtrHld)TData_free_name;
+    var->data_type=CString;
+    return var;
+}
+
+char *TVariant_cstring(TVariant *var)
+{
+    return (char*) var->val;
+}
+
+

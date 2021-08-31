@@ -19,11 +19,9 @@ mnfield *mnfield_new()
     return self;
 }
 
-TField* mnfield_init(TField* fld,TData* data ,char is_generatated,
-                  int width,
-                  int max_width,
-                  int fixed_width,
-                  TCstring caption,const char* name){
+TField *mnfield_init(TField* fld, TData *data,char is_generatated,
+                  int width, int max_width, int fixed_width,
+                  TCstring caption, const char *name){
    // fld->private.caption=cstring_new_clone(caption);
     fld->private.width=width;
     fld->private.max_width=max_width;

@@ -34,7 +34,7 @@ void TField_set_is_generated(TField* fld ,char is_generated_bool);
 TData* TField_data(TField* fld);
 void TField_set_data(TField* fld,TData* data);
 mnfield *mnfield_new();
-TField *mnfield_init(TField* fld, TData *data,char is_generated,
+TField *mnfield_init(TField* fld, TData *data, char is_generatated,
                   int width, int max_width, int fixed_width,
                   TCstring caption, const char *name);
 TField *mnfield_init_v1(TField* fld, TData* data, const char *name);

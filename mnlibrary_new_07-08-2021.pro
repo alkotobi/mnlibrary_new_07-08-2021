@@ -4,6 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        sqlite3.c\
+        mndatabase.c \
+        mnrecordset.c \
+        mnsql.c\
         cstring.c\
         cstring_test.c \
         do_test.c \
@@ -24,6 +28,10 @@ SOURCES += \
         test.c
 
 HEADERS += \
+    sqlite3.h\
+    mndatabase.h \
+    mnrecordset.h \
+    mnsql.h\
     cstring.h\
     cstring_test.h \
     do_test.h \

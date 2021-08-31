@@ -240,6 +240,7 @@ char mnstring_is_empty(mnstring* str){
 
 mnstring *mnstring_new_from_array(TArray *list)
 {
+
     int size=0;
     for (TLint i=0;i<TArray_count(list) ;i++ ) {
         //if (!list->data[1])continue;
