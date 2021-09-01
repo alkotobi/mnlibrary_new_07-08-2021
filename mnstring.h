@@ -2,7 +2,6 @@
 #define MNSTRING_H
 
 #include "mnarray.h"
-#include "cstring.h"
 
 #include <stdio.h>
 
@@ -18,11 +17,7 @@ struct mnstring{
   int size;
 };
 
-typedef mnstring TString;
-TString* TString_new();
-TString* TString_init(TString* str, char *c_str);
-TString* TString_init_with_cloned_cstr(TString* str,const char *c_str);
-TString* TString_init_with_empty_cstr(TString* str);
+
 TData* TDAta_init_mnstring(TData* data,mnstring* str);
 mnstring* TData_mnstring(TData* data);
 char mnstring_is_greater(mnstring* str1,mnstring*str2);
@@ -54,7 +49,7 @@ mnstring* TArray_add_mnstring(TArray* arr ,mnstring* str);
 mnstring* TArray_mnstring_at(TArray* arr,TLint index);
 void TArry_clean_mnstring(TArray* arr);
 
-#define TO_TRASH_MNS(X) TArray_add(_trash,(TVar)(TDAta_init_mnstring(TData_new(),X)))
+#define TO_TRASH_MNS(X) (mnstring*)(TArray_add(_trash,(TVar)(TDAta_init_mnstring(TData_new(),X))))
 #ifdef __cplusplus
 }
 #endif

@@ -38,18 +38,13 @@ void mnrecord_add_field_byref(mnrecord* self,mnfield* field);
 void mnrecord_add_field_bycpy(mnrecord* self,mnfield* field);
 mnfield* mnrecord_field_byind_ref(mnrecord* self, TLint ind);
 mnfield* mnrecord_field_byname_ref(mnrecord* self, const char *name);
-void mnrecord_set_field_val_by_name(mnrecord *record, const char* field_name, TData *val);
+TData *mnrecord_set_field_val_by_name(mnrecord *record, const char* field_name, TData *val);
 char mnrecord_set_field_val_int(mnrecord *record, const char* field_name, int val);
 char mnrecord_set_field_val_cstring(mnrecord *record, const char* field_name, const char* val);
-char mnrecord_set_field_val_mnstring(mnrecord *record,
-                                     const char* field_name,
-                                     const char* val);
 char mnrecord_set_field_val_double(mnrecord *record, const char* field_name, double val);
 
 int mnrecord_get_field_val_int(mnrecord *record, const char* field_name);
 char* mnrecord_get_field_val_cstring_ref(mnrecord *record, const char* field_name);
-char* mnrecord_get_field_val_mnstring_ref(mnrecord *record,
-                                     const char* field_name);
 double mnrecord_get_field_val_double(mnrecord *record, const char* field_name);
 char *mnrecord_sql_fields(mnrecord *record);
 char* mnrecord_sql_select(mnrecord* record,char* table_name);

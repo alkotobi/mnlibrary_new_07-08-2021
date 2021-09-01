@@ -11,8 +11,8 @@ extern "C"
 typedef TArray TDictionary ;
 
 TDictionary *TDictionary_new();
-void TDictionary_init(TDictionary* dic, TLint size);
-void TDictionary_add(TDictionary* dic, TData *item);
+TDictionary *TDictionary_init(TDictionary* dic, TLint size);
+TData *TDictionary_add(TDictionary* dic, TData *item);
 void TDictionary_expend(TDictionary** dic);
 
 

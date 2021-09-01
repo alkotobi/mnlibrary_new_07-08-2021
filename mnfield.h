@@ -1,6 +1,7 @@
 #ifndef MNFIELD_H
 #define MNFIELD_H
-#include "cstring.h"
+
+#include "mnarray.h"
 \
 #include <stdio.h>
 #ifdef __cplusplus
@@ -32,7 +33,7 @@ typedef struct mnfield TField ;
 char TField_is_generated(TField* fld);
 void TField_set_is_generated(TField* fld ,char is_generated_bool);
 TData* TField_data(TField* fld);
-void TField_set_data(TField* fld,TData* data);
+TData *TField_set_data(TField* fld,TData* data);
 mnfield *mnfield_new();
 TField *mnfield_init(TField* fld, TData *data, char is_generatated,
                   int width, int max_width, int fixed_width,
@@ -70,6 +71,7 @@ TData *TData_init_field(TData* data_fld, TField *fld);
 
 TField* TData_field(TData* data_fdl);
 char TField_is_greater(TField* fld1,TField* fld2);
+char* TField_to_csting(TField* fld);
 
 typedef  TArrayData TFields;
 TFields* TFields_new();

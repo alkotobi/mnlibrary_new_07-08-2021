@@ -3,7 +3,6 @@
 
 #include "mnarray.h"
 #include "test.h"
-#include "cstring.h"
 
 
 char TArray_new_test();

@@ -4,6 +4,7 @@
 #include "cstring_test.h"
 #include "mnfield_test.h"
 #include "mnrecord_test.h"
+#include "tvariant_test.h"
 
 char do_test();
 

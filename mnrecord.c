@@ -107,10 +107,10 @@ mnfield* mnrecord_field_byname_ref(mnrecord* self, const char* name){
 
 
 
-void mnrecord_set_field_val_by_name(mnrecord* record, const char* field_name,
+TData* mnrecord_set_field_val_by_name(mnrecord* record, const char* field_name,
                                      TData *val){
     mnfield* fld =mnrecord_field_byname_ref(record,field_name);
-     TField_set_data(fld,val);
+     return TField_set_data(fld,val);
 }
 char mnrecord_set_field_val_int(mnrecord *record, const char* field_name, int val){
     mnfield* fld =mnrecord_field_byname_ref(record,field_name);
@@ -126,15 +126,7 @@ char mnrecord_set_field_val_cstring(mnrecord *record, const char* field_name, co
     }
     return fld!=0;
 }
-char mnrecord_set_field_val_mnstring(mnrecord *record,
-                                     const char* field_name,
-                                     const char *val){
-    mnfield* fld =mnrecord_field_byname_ref(record,field_name);
-    if (fld) {
-        mnfield_setval_cstring(fld,val);
-    }
-    return fld!=0;
-}
+
 char mnrecord_set_field_val_double(mnrecord *record, const char* field_name, double val){
     mnfield* fld =mnrecord_field_byname_ref(record,field_name);
     if (fld) {
@@ -160,12 +152,6 @@ char* mnrecord_get_field_val_cstring_ref(mnrecord *record, const char* field_nam
     return mnfield_cstring_val_ref(fld);
 }
 
-char *mnrecord_get_field_val_mnstring_ref(mnrecord *record,
-                                              const char* field_name){
-    mnfield* fld= mnrecord_field_byname_ref(record,field_name);
-
-    return mnfield_cstring_val_ref(fld);
-}
 char *mnrecord_sql_fields(mnrecord *record)
 {
     TCstrings* strs= TCstrings_init(TCstrings_new());

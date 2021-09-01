@@ -4,6 +4,7 @@
 char do_test()
 {
     char ret=1;
+    TVariant_test();
     mnrecord_test();
     ret=ret*mnfield_test();
     ret=ret*cstring_test();

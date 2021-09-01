@@ -22,13 +22,15 @@ TDictionary *TDictionary_new()
     return dic;
 }
 
-void TDictionary_init(TDictionary* dic,TLint size){
+TDictionary* TDictionary_init(TDictionary* dic,TLint size){
         TArray_init_v1(dic,size);
     TArray_set_all_to_zero(dic);
+    return dic;
 }
 
-void TDictionary_add(TDictionary *dic,TData* item)
+TData* TDictionary_add(TDictionary *dic,TData* item)
 {
+    TData* d=0;
     assert(TData_name(item));
     double factor =  TArray_size(dic)/(double)TArray_count(dic);
     if (factor<0.75) {
@@ -38,12 +40,13 @@ void TDictionary_add(TDictionary *dic,TData* item)
     TLinkedListData* data = (TLinkedListData*)TArray_item_at(dic,index);
     if (data) {
 
-        TLinkedListData_add_or_replace(data,item);
+        return TLinkedListData_add_or_replace(data,item);
     }else {
         TLinkedListData* data = TLinkedListData_new(item);
-        TArray_set_item_at(dic,data,index,0);
+        return  TArray_set_item_at(dic,data,index);
     }
     TArray_set_count(dic,TArray_count(dic)+1);
+    return d;
 }
 
 void TDictionary_expend(TDictionary **dic)
@@ -61,7 +64,7 @@ void TDictionary_expend(TDictionary **dic)
                 data=d;
             }
             free(d);
-            TArray_set_item_at(*dic,0,i,0);
+            TArray_set_item_at(*dic,0,i);
         }
     }
     TArray_clean(*dic,0);

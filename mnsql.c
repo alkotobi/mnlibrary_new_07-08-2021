@@ -93,7 +93,7 @@ mnstring *mnsql_make_sql_ref(mnsql *msql)
          arr=TArray_clone(msql->filters,(TFVarVar)mnstring_clone);
         if (!where_sql || mnstring_is_empty(where_sql)) {
             mnstring_free(TArray_item_at(arr,0));
-            TArray_set_item_at(arr,mnstring_new_from_cstring_cpy(" WHERE "),0,0);
+            TArray_set_item_at(arr,mnstring_new_from_cstring_cpy(" WHERE "),0);
         }
         filters =TO_TRASH_MNS(mnstring_new_from_array(arr));
     }else {

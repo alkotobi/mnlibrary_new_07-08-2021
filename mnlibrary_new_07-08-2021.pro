@@ -4,11 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        mnsql_table.c\
+        mndatabase_test.c \
         sqlite3.c\
         mndatabase.c \
         mnrecordset.c \
         mnsql.c\
-        cstring.c\
         cstring_test.c \
         do_test.c \
         main.c \
@@ -25,14 +26,16 @@ SOURCES += \
         mnrecord_test.c \
         mnstring.c \
         mntypes.c \
-        test.c
+        test.c \
+        tvariant_test.c
 
 HEADERS += \
+    mnsql_table.h\
+    mndatabase_test.h \
     sqlite3.h\
     mndatabase.h \
     mnrecordset.h \
     mnsql.h\
-    cstring.h\
     cstring_test.h \
     do_test.h \
     mnarray.h \
@@ -48,4 +51,5 @@ HEADERS += \
     mnrecord_test.h \
     mnstring.h \
     mntypes.h \
-    test.h
+    test.h \
+    tvariant_test.h

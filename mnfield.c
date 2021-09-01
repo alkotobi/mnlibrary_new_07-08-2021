@@ -20,9 +20,8 @@ mnfield *mnfield_new()
 }
 
 TField *mnfield_init(TField* fld, TData *data,char is_generatated,
-                  int width, int max_width, int fixed_width,
-                  TCstring caption, const char *name){
-   // fld->private.caption=cstring_new_clone(caption);
+                     int width, int max_width, int fixed_width,
+                     TCstring caption, const char *name){
     fld->private.width=width;
     fld->private.max_width=max_width;
     fld->private.fixed_width=fixed_width;
@@ -30,7 +29,6 @@ TField *mnfield_init(TField* fld, TData *data,char is_generatated,
     fld->private.data=data;
     fld->private.is_generated=is_generatated;
     TData_set_name(fld->private.data,name);
-    //TData_set_visible(TField_data(fld),is_generatated);
     return fld;
 }
 
@@ -101,7 +99,7 @@ void mnfield_setval_int(mnfield *field, int data)
 {
     int* i=(int*)malloc(sizeof (int));
     *i=data;
-    TData_set_value(TField_data(field),i);
+    free(TData_set_value(TField_data(field),i));
 
 }
 
@@ -109,12 +107,12 @@ void mnfield_setval_double(mnfield *field, double data)
 {
     double* i=(double*)malloc(sizeof (double));
     *i=data;
-    TData_set_value(TField_data(field),i);
+    free(TData_set_value(TField_data(field),i));
 }
 
 void mnfield_setval_cstring(mnfield *field, const char *str)
 {
-    TData_set_value(TField_data(field),cstring_new_clone(str));
+    free(TData_set_value(TField_data(field),cstring_new_clone(str)));
 }
 
 
@@ -199,13 +197,13 @@ TData *TField_data(TField *fld)
     return fld->private.data;
 }
 
-void TField_set_data(TField *fld, TData *data)
+TData* TField_set_data(TField *fld, TData *data)
 {
-//    if (!TData_is_presistent(TField_data(fld))) {
-        TData* d=TField_data(fld);
-        TData_clean_free(&d);
-//    }
-    fld->private.data=data;
+    assert(fld);
+    TData* d=0;
+        d=TField_data(fld);
+        fld->private.data=data;
+    return d;
 }
 
 
@@ -241,6 +239,10 @@ char TField_is_greater(TField *fld1, TField *fld2)
         return 0;
     }
     return TField_data(fld1)->is_greater(TField_data(fld1),TField_data(fld2));
+}
+
+char* TField_to_csting(TField* fld){
+    return TVariant_to_new_cstring(TData_variant(TField_data(fld)));
 }
 
 TFields *TFields_new()

@@ -1,13 +1,9 @@
 #include "mntypes.h"
 
 TVar TValues_new(TLint size){
-    TValues arr =(TValues)malloc(sizeof(TVar)*size);
+    TValues arr =(TValues)calloc(size,sizeof(TVar));
     assert(arr);
     return arr;
-}
-void TValues_realloc(TValues* arr,TLint new_size){
-    *arr =(TValues)realloc(*arr,sizeof(TVar)*new_size);
-    assert(*arr);
 }
 
 void TValues_free(TValues *arr)
@@ -20,52 +16,33 @@ TData *TData_new()
 {
     TData* d=(TData*)malloc(sizeof (TData));
     assert(d);
- //   d->free_val=0;
     d->clone_val=0;
     d->is_equal=0;
     d->is_greater=0;
     d->var=0;
-   // d->priv.data_type=0;
-    //d->priv.is_presistent=0;
-    //d->priv.is_read_only=0;
-//    d->priv.name=0;
-//    d->priv.val=0;
-    //d->priv.is_visible=1;
     return d;
 }
 
 TData* TData_init(TTypes data_type, TData *data, TVar val,
-                TFVoidPtrHld free_val, TFVarVar clone_val,
-                TFCharVarVar is_equal, TFCharVarVar is_greater)
+                  TFVoidPtrHld free_val, TFVarVar clone_val,
+                  TFCharVarVar is_equal, TFCharVarVar is_greater)
 {
-    //data->free_val=free_val;
     data->clone_val=clone_val;
     data->is_equal=is_equal;
     data->is_greater=is_greater;
-    data->var=TVariant_init(TVariant_new(),data_type,val,0,free_val);
-    //data->priv.data_type=data_type;
-    //data->priv.is_presistent=0;
-    //data->priv.is_read_only=0;
-    //data->priv.name=0;
-    //data->priv.val=val;
+    data->var=TVariant_init(TVariant_new(),data_type,val,NAMELESS,free_val);
     return data;
 
 }
 
 void TData_clean(TData *data)
 {
-    //assert(!data->priv.is_presistent);
-
-        TVariant_clean(data->var);
-        TVariant_free(&data->var);
-        //data->free_val(&data->priv.val);
-
-
+    TVariant_clean(data->var);
+    TVariant_free(&data->var);
 }
 
 void TData_free(TPtrHld data)
 {
-    //free(((TData *)(*data))->priv.name);
     free(*data);
     *data=0;
 }
@@ -89,7 +66,6 @@ TData *TData_new_persistent(TData *data)
     d->var=data->var;
     TData_clone_methods(data,d);
     TData_clone_properties(data,d);
-    //TData_set_presistent(d,1);
     return d;
 }
 
@@ -97,12 +73,10 @@ TVariant* TData_variant(TData* data){
     return data->var;
 }
 
-void TData_set_variant(TData* data,TVariant* var){
-    if (TData_variant(data)) {
-        TVariant_clean(data->var);
-        TVariant_free(&data->var);
-    }
+TVariant* TData_set_variant(TData* data,TVariant* var){
+    TVariant* v = TData_variant(data);
     data->var=var;
+    return v;
 }
 void TData_clone_methods(TData *data_src, TData *data_des)
 {
@@ -113,10 +87,7 @@ void TData_clone_methods(TData *data_src, TData *data_des)
 }
 
 void TData_clone_properties(TData* data_src,TData* data_des){
-    //TData_set_readonly(data_des,TData_is_read_only(data_src));
-    //TData_set_presistent(data_des,TData_is_presistent(data_src));
     TData_set_name(data_des,TData_name(data_src));
-    //TData_set_visible(data_des,TData_is_visible(data_src));
     TData_set_type(data_des,TData_type(data_src));
 }
 
@@ -152,10 +123,9 @@ TVar TData_value(TData *d)
     return (TVariant_value(d->var));
 }
 
-void TData_set_value(TData *d, TVar val)
+TVar TData_set_value(TData *d, TVar val)
 {
-    //assert(!TData_is_read_only(d));
-    TVariant_set_value(d->var,val);
+    return TVariant_set_value(d->var,val);
 }
 
 //char TData_is_read_only(TData *d)
@@ -255,6 +225,9 @@ int TDataInt_val(TDataInt *i)
 }
 
 
+char* TData_to_new_cstring(TData* data){
+    return TVariant_to_new_cstring(TData_variant(data));
+}
 
 
 
@@ -336,7 +309,7 @@ TVariant *TVariant_init(TVariant *var, TTypes data_type, TVar val,
 void TVariant_clean(TVariant *var)
 {
     if (var->free_me){
-    var->free_me($P(var->val));
+        var->free_me($P(var->val));
     }
 }
 
@@ -375,14 +348,15 @@ TVar TVariant_value(TVariant *var)
     return var->val;
 }
 
-void TVariant_set_value(TVariant *var, TVar value)
+TVar TVariant_set_value(TVariant *var, TVar value)
 {
-    assert(var);
-    if (var->free_me) {
-        var->free_me($P(var->val));
+    TVar v =0;
+    if(var){
+        v =var->val;
+        var->val=value;
     }
-    if(var)
-    var->val=value;
+
+    return v;
 }
 
 TTypes TVariant_type(TVariant *var)
@@ -404,8 +378,8 @@ void TVariant_clean_free(TVariant **var_hld)
 TVariant *TVariant_clone(TVariant *var, TFVarVar clone_val)
 {
     return TVariant_init(TVariant_new(),
-                               TVariant_type(var),clone_val(TVariant_value(var)),
-                               TVariant_name(var),var->free_me);
+                         TVariant_type(var),clone_val(TVariant_value(var)),
+                         TVariant_name(var),var->free_me);
 }
 
 TVariant *TVariant_init_int(TVariant* var,int n)
@@ -458,4 +432,334 @@ char *TVariant_cstring(TVariant *var)
     return (char*) var->val;
 }
 
+char* TVariant_to_new_cstring(TVariant* var){
+    //TODO:test TVariant_to_new_cstring
+    char* str=0;
+    switch (TVariant_type(var)) {
+    case Int:
+        str=cstring_new_fill_with_char(' ',INT_PRINT_SIZE);
+        char s[25] ;
+        sprintf(s,"%d",TVariant_int(var));
+        cstring_replace_sub_string_at(TCstringSize_init(str,INT_PRINT_SIZE),s,0);
+        return str;
+        break;
+    case CString:
+        str=cstring_new_fill_with_char(' ',STRING_PRINT_SIZE);
+        cstring_replace_sub_string_at(TCstringSize_init(str,STRING_PRINT_SIZE),TVariant_cstring(var),0);
+        return str;
+        break;
+    case Double:
 
+        str=cstring_new_fill_with_char(' ',DOUBLE_PRINT_SIZE);
+        char s1[50] ;
+        sprintf(s1,"%f",TVariant_double(var));
+        cstring_replace_sub_string_at(TCstringSize_init(str,DOUBLE_PRINT_SIZE),s1,0);
+        return str;
+        break;
+    default:
+        assert(0);
+        break;
+
+    }
+}
+
+
+
+
+
+TLint cstring_count(const char *str)
+{
+    if (!str) {
+        return 0;
+    }
+    TLint j;j=0;
+    for(;;){
+        if(str[j]=='\0'){
+            break;
+        }
+        j++;
+    }
+    return j;
+}
+
+TLint cstring_size(const char* str){
+    return cstring_count(str)+1;
+}
+
+char* cstring_new(TLint size){
+    char* str = (char*)malloc(sizeof (char)*(size+1));
+    str[0]=0;
+    assert(str);
+    return str;
+}
+
+char* cstring_new_fill_with_char(char character,TLint size){
+    char* str = cstring_new(size);
+    str[size]=0;
+    for (TLint i=0;i<size;i++) {
+        str[i]=character;
+
+    }
+    return str;
+}
+
+char* cstring_replace_sub_string_at(TCstringSize str_src,char* str_sub,TLint index){
+    assert(index<str_src.size);
+    for (TLint i=index;i<str_src.size ; i++) {
+        if (str_sub[i-index]==0) {
+            return str_src.cstring;
+        }
+        str_src.cstring[i]=str_sub[i-index];
+    }
+    str_src.cstring[str_src.size]=0;
+    return str_src.cstring;
+}
+
+char *cstring_new_clone(const  char *str)
+{
+    if (!str) {
+        return 0;
+    }
+    int size=cstring_size(str);
+    char* str2=malloc(sizeof (char)*size);
+    assert(str2);
+    for(int i=0;str[i]!=0;i++){
+        str2[i]=str[i];
+
+    }
+    str2[size-1]=0;
+    return str2;
+}
+
+char *cstring_new_copy_with_char_count(const char *str, int char_count)
+{
+    char* str2=malloc(sizeof (char)*(char_count+1));
+    for(int i=0;i<char_count;i++){
+        str2[i]=str[i];
+
+    }
+    str2[char_count]=0;
+    return str2;
+}
+
+char cstring_is_equal(const char *str1, const char *str2)
+{
+    int count1= cstring_count(str1);
+    int count2= cstring_count(str2);
+    if (count1!=count2){
+        return 0;
+    }
+    for (int i=0;i<count1 ;i++ ) {
+        if(str1[i]!=str2[i]){
+            return 0;
+        }
+    }
+    return 1;
+}
+char *cstring_new_from_concat_with_nl(char ** str_list,size_t strings_count){
+    size_t count=0;
+    for (size_t i=0; i < strings_count; i++)
+    {
+        count = count+cstring_count(str_list[i]);
+    }
+    char* str=malloc(sizeof(char)*((count+1)+strings_count));
+    int j=0;
+
+    for (size_t i=0; i < strings_count; i++)
+    {
+        char* s=str_list[i];
+        for (int i=0;s[i]!=0 ;i++ ) {
+            str[j]=s[i];
+            j++;
+        }
+        str[j]='\n';
+        j++;
+    }
+    str[j]=0;
+    return str;
+}
+char *cstring_new_from_concat_v1(char ** str_list,size_t strings_count){
+    size_t count=0;
+    for (size_t i=0; i < strings_count; i++)
+    {
+        count = count+cstring_count(str_list[i]);
+    }
+    char* str=malloc(sizeof(char)*(count+1));
+    int j=0;
+
+    for (size_t i=0; i < strings_count; i++)
+    {
+        char* s=str_list[i];
+        for (int i=0;s[i]!=0 ;i++ ) {
+            str[j]=s[i];
+            j++;
+        }
+    }
+    str[j]=0;
+    return str;
+}
+char *cstring_new_from_concat(int strings_count,...)
+{
+    va_list L;
+    int count = 0;
+    va_start(L, strings_count);
+    for (int i=0; i < strings_count; i++)
+    {
+        count = count+cstring_count(va_arg(L, char*));
+    }
+
+    va_end(L);
+    char* str=malloc(sizeof(char)*(count+1));
+    int j=0;
+    va_start(L, strings_count);
+
+    for (int i=0; i < strings_count; i++)
+    {
+        char* s=va_arg(L, char*);
+        for (int i=0;s[i]!=0 ;i++ ) {
+            str[j]=s[i];
+            j++;
+        }
+    }
+    str[j]=0;
+    va_end(L);
+    return str;
+}
+
+char cstring_is_empty(const char *str)
+{
+    return cstring_is_equal(str,"");
+}
+
+void cstring_free(void **str)
+{
+    free(*str);
+    *str=0;
+}
+
+char cstring_is_greater(const char *str1, const char *str2)
+{
+    int len1=cstring_count(str1);
+    int len2=cstring_count(str2);
+    int len = len1<len2? len1:len2;
+    for (int i =0;i<len ;i++ ) {
+        if (str1[i]==str2[i]) {
+            continue;
+        }
+        if(str1[i]<str2[i]) {
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void cstring_add_chars(TCstring str,TCstring chars){
+    //TODO: cstring_add_chars redesign to avoid errors
+    TLint str_count=cstring_count(str);
+    TLint chars_count = cstring_count(chars);
+    TLint j=0;
+    TLint i = str_count;
+    for (;i<str_count+chars_count ;i++ ) {
+        str[i]=chars[j];
+        j++;
+    }
+    str[i]=0;
+
+}
+
+TData* TData_init_cstring(TData* data, const char* str){
+    return  TData_init (CString,data,(TVar)str,cstring_free,
+                        (TFVarVar)cstring_new_clone,
+                        (TFCharVarVar)cstring_is_equal,
+                        (TFCharVarVar)cstring_is_greater);
+}
+
+
+char* TData_cstring(TData* d){
+    return   (TCstring) TData_value(d);
+}
+
+
+
+
+
+TCstringSize TCstringSize_init(char *str, TLint size)
+{
+    TCstringSize s;
+    s.cstring=str;
+    s.size=size;
+    return s;
+}
+
+
+//TString
+
+TString *TString_new(){
+    TString * str =(TString*)malloc(sizeof (TString));
+    assert(str);
+    str->count=0;
+    str->size=0;
+    str->cstring=0;
+    return str;
+}
+TString *TString_init(TString *str, char *cstring)
+{
+    str->count=cstring_count(cstring);
+    str->size =str->count;
+    str->cstring=cstring_new_clone(cstring);
+    return str;
+}
+
+void TString_clean(TString *str)
+{
+    free(str->cstring);
+    str->cstring=0;
+    str->count=0;
+    str->size=0;
+}
+
+void TString_free(TString **str_hld)
+{
+    free(*str_hld);
+    *str_hld=0;
+}
+
+TString *TString_insert_sub_at(TString *str_src, char *str_sub, int index)
+{
+    int sub_count=cstring_count(str_sub);
+    if (str_src->count) {
+
+    }
+}
+
+int TString_count(TString *str)
+{
+    return str->count;
+}
+
+void TString_set_count(TString *str, int count)
+{
+    str->count=count;
+}
+
+int TString_size(TString *str)
+{
+    return str->size;
+}
+
+void TString_set_size(TString *str, int size)
+{
+    str->size=size;
+}
+
+char *Tstring_cstring(TString *str)
+{
+    return str->cstring;
+}
+
+void TString_set_cstring(TString *str, char *cstring)
+{
+    str->cstring=cstring;
+}

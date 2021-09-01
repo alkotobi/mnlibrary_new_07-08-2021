@@ -262,52 +262,7 @@ mnstring *mnstring_new_from_array(TArray *list)
     return s;
 }
 
-TString *TString_new()
-{
-    TString* str=(TString*)malloc(sizeof (TString));
-    assert(str);
-    str->count=0;
-    str->size=0;
-    str->string=0;
-    return str;
-}
 
-TString *TString_init(TString *str,  char *c_str)
-{
-    if (!c_str) {
-        c_str=cstring_new(ARRAY_MIN_SIZE);
-    }
-    str->string=c_str;
-    str->size=ARRAY_MIN_SIZE;
-    return str;
-}
-
-void TString_clear(TString *str)
-{
-    cstring_free($P(str->string));
-}
-
-void TString_free(TString **str_hld)
-{
-    free(*str_hld);
-    *str_hld=0;
-}
-
-TString *TString_init_with_cloned_cstr(TString *str, const char *c_str)
-{
-    return TString_init(str,cstring_new_clone(c_str));
-}
-
-TString *TString_init_with_empty_cstr(TString *str)
-{
-    return TString_init(str,0);
-}
-
-void TString_clear_free(TString **str_hld)
-{
-    TString_clear(*str_hld);
-    TString_free(str_hld);
-}
 
 char mnstring_is_greater(mnstring* str1,mnstring*str2){
     return cstring_is_greater(str1->string,str2->string);

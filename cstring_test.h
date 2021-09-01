@@ -1,6 +1,6 @@
 #ifndef CSTRING_TEST_H
 #define CSTRING_TEST_H
-#include "cstring.h"
+#include "mnarray.h"
 #include "test.h"
 
 char cstring_test();

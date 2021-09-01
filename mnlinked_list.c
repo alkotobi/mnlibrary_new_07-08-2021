@@ -30,20 +30,20 @@ TLinkedList *TLinkedListData_new(TData *val)
 
 void TLinkedListData_add(TLinkedListData *root, TData* item)
 {
-    TLinkedList_add(root,item);
+      TLinkedList_add(root,item);
 }
 
-void TLinkedListData_add_or_replace(TLinkedListData *root, TData *item)
+TData* TLinkedListData_add_or_replace(TLinkedListData *root, TData *item)
 {
     TLinkedListData* list =TLinkedListData_find(root, item);
+    TData* d=0;
     if (list) {
-        //if (!TData_is_presistent(TLinkedListData_get_data(list))) {
-            TData_clean(TLinkedListData_get_data(list));
-       // }
+        d=TLinkedListData_get_data(list);
         TData_set_value(TLinkedListData_get_data(list),item);
     }else{
         TLinkedListData_add(root,item);
     }
+    return d;
 }
 
 TLinkedListData *TLinkedListData_find(TLinkedListData *root, TData *item)
@@ -63,14 +63,16 @@ TData *TLinkedListData_get_data(TLinkedListData *item)
     return  item->val;
 }
 
-void TLinkedList_add_or_replace(TLinkedListData *root, TVar *item, TFVoidPtrHld free_me, TFCharVarVar is_equal)
+TVar TLinkedList_add_or_replace(TLinkedListData *root, TVar *item, TFCharVarVar is_equal)
 {
     TLinkedListData* list =TLinkedList_find(root, item,is_equal);
-    if (list) {
-        TLinkedList_set_value(list,item,free_me);
+    TVar v = 0;
+    if (list) {      
+       v= TLinkedList_set_value(list,item);
     }else{
         TLinkedList_add(root,item);
     }
+    return v;
 }
 
 TLinkedList *TLinkedList_find(TLinkedList *root, TVar *item, TFCharVarVar is_equal)
@@ -88,10 +90,12 @@ TVar TLinkedList_get_value(TLinkedListData *item)
     return item->val;
 }
 
-void TLinkedList_set_value(TLinkedListData *item, TVar value,TFVoidPtrHld free_me)
+TVar TLinkedList_set_value(TLinkedListData *item, TVar value)
 {
-    if (free_me) {
-        free_me(value);
+    TVar v=0;
+    if (item) {
+        v=TLinkedList_get_value(item);
     }
     item->val=value;
+    return v;
 }
